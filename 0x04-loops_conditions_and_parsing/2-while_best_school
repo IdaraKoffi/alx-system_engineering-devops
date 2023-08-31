@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#Creating a script that uses a while loop
+p=1
+while [ $p -le 10 ]
+do
+    echo "Best School"
+    p=$(( p + 1 ))
+done
