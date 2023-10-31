@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
-# Script that turns on an Apache Server
+# This script fixes Apache configuration to return "Hello Holberton"
+
+# Start Apache2 service
 service apache2 start
+
+# Create an HTML file with the content "Hello Holberton" in the web server's root directory
+echo "Hello Holberton" > /var/www/html/index.html
