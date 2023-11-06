@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# This script installs and configures HAProxy on an Ubuntu machine
+
+# Update the system packages
+sudo apt update
+sudo apt upgrade -y
+
+# Install HAProxy
+sudo apt install -y haproxy
+
+# Configure HAProxy for load balancing
+echo "frontend http_front" | sudo tee -a /etc/haproxy/haproxy.cfg
+echo "    bind *:80" | sudo tee -a /etc/haproxy/haproxy.cfg
+echo "    mode http" | sudo tee -a /etc/haproxy/haproxy.cfg
+echo "    default_backend http_back" | sudo tee -a /etc/haproxy/haproxy.cfg
+echo " " | sudo tee -a /etc/haproxy/haproxy.cfg
+echo "backend http_back" | sudo tee -a /etc/haproxy/haproxy.cfg
+echo "    balance roundrobin" | sudo tee -a /etc/haproxy/haproxy.cfg
+echo "    server web-01 [STUDENT_ID]-web-01:80 check" | sudo tee -a /etc/haproxy/haproxy.cfg
+echo "    server web-02 [STUDENT_ID]-web-02:80 check" | sudo tee -a /etc/haproxy/haproxy.cfg
+
+# Restart HAProxy to apply changes
+sudo systemctl restart haproxy
+
+# Ensure HAProxy is started on boot
+sudo systemctl enable haproxy
