@@ -7,34 +7,41 @@ if ! dpkg -l | grep -q "nginx"; then
   sudo apt-get install -y nginx
 fi
 
-# Create a custom Nginx configuration file
+# Create a custom Nginx configuration file with the desired custom header
 cat <<EOF > /etc/nginx/sites-available/custom_header
 server {
     listen 80;
     server_name _;
 
     location / {
-        add_header X-Served-By $HOSTNAME;
+        add_header X-Served-By \$hostname;
     }
 }
 EOF
 
 # Create a symbolic link to enable the custom configuration
-ln -s /etc/nginx/sites-available/custom_header /etc/nginx/sites-enabled/
+if [ ! -f /etc/nginx/sites-enabled/custom_header ]; then
+  ln -s /etc/nginx/sites-available/custom_header /etc/nginx/sites-enabled/
+fi
 
 # Remove the default Nginx site configuration if it exists
 if [ -f /etc/nginx/sites-enabled/default ]; then
     rm /etc/nginx/sites-enabled/default
 fi
 
-# Reload Nginx to apply the new configuration
-service nginx reload
+# Test Nginx configuration to avoid syntax errors
+if nginx -t; then
+  # Reload Nginx to apply the new configuration
+  service nginx reload
 
-# Check if the Nginx service is running
-if ! service nginx status | grep -q "is running"; then
-  echo "Nginx failed to start or restart. Please check the configuration."
+  # Check if the Nginx service is running
+  if service nginx status | grep -q "is running"; then
+    echo "Nginx has been configured to add the custom X-Served-By header with the server's hostname."
+  else
+    echo "Nginx failed to start or restart. Please check the configuration."
+    exit 1
+  fi
+else
+  echo "Nginx configuration test failed. Please check the configuration file for syntax errors."
   exit 1
 fi
-
-# Exit with a success message
-echo "Nginx has been configured to add the custom X-Served-By header with the server's hostname."
