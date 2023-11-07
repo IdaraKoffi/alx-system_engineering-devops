@@ -14,7 +14,7 @@ server {
     server_name _;
 
     location / {
-        proxy_set_header X-Served-By $HOSTNAME;
+        add_header X-Served-By $HOSTNAME;
     }
 }
 EOF
@@ -28,13 +28,10 @@ if [ -f /etc/nginx/sites-enabled/default ]; then
 fi
 
 # Reload Nginx to apply the new configuration
-sudo systemctl reload nginx
-
-# Restart Nginx to ensure changes take effect
-sudo systemctl restart nginx
+service nginx reload
 
 # Check if the Nginx service is running
-if ! systemctl is-active --quiet nginx; then
+if ! service nginx status | grep -q "is running"; then
   echo "Nginx failed to start or restart. Please check the configuration."
   exit 1
 fi
