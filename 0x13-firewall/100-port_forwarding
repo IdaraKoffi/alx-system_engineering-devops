@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Install UFW (Uncomplicated Firewall) if not already installed
+sudo apt-get update
+sudo apt-get install -y ufw
+
+# Allow incoming traffic on port 80/TCP
+sudo ufw allow 80/tcp
+
+# Redirect traffic from port 8080/TCP to port 80/TCP
+sudo ufw route allow 8080
+
+# Enable UFW
+sudo ufw enable
