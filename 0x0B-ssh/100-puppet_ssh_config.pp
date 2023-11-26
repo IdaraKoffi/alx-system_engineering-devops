@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Changes SSH config file
+# using puppet to make changes SSH cofig file
 
 file { 'ect/ssh/ssh_cofig':
 	ensure => present,
